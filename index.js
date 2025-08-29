@@ -1,18 +1,18 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const app = express()
+
+const app = express();
 const port = process.env.PORT || 6969;
 
-// Middle Ware // 
+// Middlewares
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
-// mongo connected // 
-
+// Mongo URI
 const uri = "mongodb+srv://fahimabrarasif_db_user:0Ch6orabUUVH3WMy@cluster0.ngmrg4r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+// Mongo client
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -23,28 +23,36 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    console.log("✅ MongoDB Connected");
+
+    const database = client.db("userDB");
+    const userCollection = database.collection("user");
+
+    // define routes **inside run()** so userCollection is ready
+    app.get('/', (req, res) => {
+      res.send("Simple CRUD is Running");
+    });
+
+    app.post('/user', async (req, res) => {
+      try {
+        const user = req.body;
+        console.log("📥 New User:", user);
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+      } catch (error) {
+        console.error("❌ Insert Error:", error);
+        res.status(500).send({ error: "Failed to insert user" });
+      }
+    });
+
+    app.listen(port, () => {
+      console.log(`🚀 Server running on port ${port}`);
+    });
+
+  } catch (error) {
+    console.error("❌ MongoDB Connection Failed:", error);
   }
 }
+
 run().catch(console.dir);
-
-//post users data // 
-app.post('/user', (req, res) =>{
-    const user = req.body;
-    console.log('New User', user);
-})
-
-app.get('/' , (req,res) => {
-    res.send('Simple CRUD is Running');
-})
-
-app.listen(port,() => {
-    console.log(`Simple CRUD is running on PORT :${port}`)
-})
