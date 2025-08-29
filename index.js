@@ -35,7 +35,11 @@ async function run() {
 }
 run().catch(console.dir);
 
-
+//post users data // 
+app.post('/user', (req, res) =>{
+    const user = req.body;
+    console.log('New User', user);
+})
 
 app.get('/' , (req,res) => {
     res.send('Simple CRUD is Running');
