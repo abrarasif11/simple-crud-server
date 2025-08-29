@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 6969;
@@ -29,6 +29,13 @@ async function run() {
     const database = client.db("userDB");
     const userCollection = database.collection("user");
 
+
+    app.get('/user', async(req, res) => {
+        const cursor = userCollection.find()
+        const result = await cursor.toArray();
+        res.send(result);
+    })
+
     // define routes **inside run()** so userCollection is ready
     app.get('/', (req, res) => {
       res.send("Simple CRUD is Running");
@@ -45,6 +52,17 @@ async function run() {
         res.status(500).send({ error: "Failed to insert user" });
       }
     });
+
+// delete operation // 
+app.delete('/user/:id', async (req, res) => {
+    const id = req.params.id;
+    console.log("Please Delete this user", id)
+    const query = { _id: new ObjectId(id)}
+    const result = await userCollection.deleteOne(query)
+    res.send(result)
+})
+
+
 
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
