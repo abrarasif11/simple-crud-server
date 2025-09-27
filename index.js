@@ -43,11 +43,11 @@ async function run() {
     app.post('/user', async (req, res) => {
       try {
         const user = req.body;
-        console.log("📥 New User:", user);
+        console.log("New User:", user);
         const result = await userCollection.insertOne(user);
         res.send(result);
       } catch (error) {
-        console.error("❌ Insert Error:", error);
+        console.error("Insert Error:", error);
         res.status(500).send({ error: "Failed to insert user" });
       }
     });
@@ -60,7 +60,6 @@ app.delete('/user/:id', async (req, res) => {
     const result = await userCollection.deleteOne(query)
     res.send(result)
 })
-
 
 
     app.listen(port, () => {
