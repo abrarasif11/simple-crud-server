@@ -69,7 +69,7 @@ app.delete('/user/:id', async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ MongoDB Connection Failed:", error);
+    console.error("MongoDB Connection Failed:", error);
   }
 }
 
