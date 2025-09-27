@@ -62,6 +62,7 @@ app.delete('/user/:id', async (req, res) => {
 })
 
 
+// server lister
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
